@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>水晶拖曳搭配模擬器</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+  <style>
+    body { font-family: sans-serif; background: #fdfdfd; padding: 20px; max-width: 500px; margin: auto; }
+    h2 { text-align: center; }
+    .crystal-list, .selected-list { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    .crystal, .selected { width: 60px; height: 60px; border-radius: 50%; background-size: cover; background-position: center;
+                          border: 2px solid #ccc; cursor: pointer; }
+    .selected-zone { margin: 20px 0; border: 2px dashed #aaa; padding: 10px; border-radius: 10px; min-height: 80px; }
+    .total-bar { text-align: center; margin-top: 20px; font-weight: bold; background: #fff0f5; padding: 10px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+
+<h2>拖曳水晶搭配你的能量手鍊</h2>
+
+<div class="crystal-list" id="crystal-list"></div>
+
+<h4 style="margin-top:30px;">你目前的搭配（可拖曳換順序）：</h4>
+<div class="selected-zone selected-list" id="selected-list"></div>
+
+<div class="total-bar">總金額：$<span id="total">0</span></div>
+
+<script>
+const crystals = [
+  { name: "玫瑰石英", price: 380, img: "https://i.imgur.com/Fp8hzH1.png" },
+  { name: "黑曜石", price: 420, img: "https://i.imgur.com/xllD03N.png" },
+  { name: "紫水晶", price: 390, img: "https://i.imgur.com/vULgM4j.png" },
+  { name: "月光石", price: 460, img: "https://i.imgur.com/OrvmQa9.png" },
+  { name: "白水晶", price: 360, img: "https://i.imgur.com/zOgDQUr.png" },
+  { name: "天河石", price: 430, img: "https://i.imgur.com/gwT0K8Q.png" }
+];
+
+const selected = [];
+const maxSelect = 6;
+const list = document.getElementById("crystal-list");
+const selectedList = document.getElementById("selected-list");
+const totalEl = document.getElementById("total");
+
+crystals.forEach((c, index) => {
+  const div = document.createElement("div");
+  div.className = "crystal";
+  div.style.backgroundImage = `url(${c.img})`;
+  div.title = `${c.name} $${c.price}`;
+  div.onclick = () => {
+    if (selected.length >= maxSelect) return alert("最多只能選擇 6 顆！");
+    if (selected.includes(index)) return;
+    selected.push(index);
+    renderSelected();
+  };
+  list.appendChild(div);
+});
+
+function renderSelected() {
+  selectedList.innerHTML = "";
+  let total = 0;
+  selected.forEach(i => {
+    const c = crystals[i];
+    const div = document.createElement("div");
+    div.className = "selected";
+    div.style.backgroundImage = `url(${c.img})`;
+    div.title = `${c.name} $${c.price}`;
+    selectedList.appendChild(div);
+    total += c.price;
+  });
+  totalEl.textContent = total;
+}
+
+Sortable.create(selectedList, {
+  animation: 150
+});
+</script>
+
+</body>
+</html>
